@@ -1,0 +1,15 @@
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/bin/Debug/net6.0/exercises-01
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/bin/Debug/net6.0/exercises-01.deps.json
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/bin/Debug/net6.0/exercises-01.runtimeconfig.json
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/bin/Debug/net6.0/exercises-01.dll
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/bin/Debug/net6.0/exercises-01.pdb
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/obj/Debug/net6.0/exercises-01.csproj.AssemblyReference.cache
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/obj/Debug/net6.0/exercises-01.GeneratedMSBuildEditorConfig.editorconfig
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/obj/Debug/net6.0/exercises-01.AssemblyInfoInputs.cache
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/obj/Debug/net6.0/exercises-01.AssemblyInfo.cs
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/obj/Debug/net6.0/exercises-01.csproj.CoreCompileInputs.cache
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/obj/Debug/net6.0/exercises-01.dll
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/obj/Debug/net6.0/refint/exercises-01.dll
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/obj/Debug/net6.0/exercises-01.pdb
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/obj/Debug/net6.0/exercises-01.genruntimeconfig.cache
+/Users/mac/Projects/chieut2/exercises-01/exercises-01/obj/Debug/net6.0/ref/exercises-01.dll
