@@ -1,0 +1,133 @@
+using System.Text;
+using System.IO;
+using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters;
+using System.Net.Http.Headers;
+using System.Xml.Linq;
+
+namespace Game
+{
+    //Program chính
+    public class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            User.Info_User();
+        }
+    }
+    // Người chơi
+    public class User
+    {
+        public static void Info_User()
+        {
+            string[] output = new string[]
+                {
+@"    ▄▀▀█        ",
+@"   █   █▀▀▀█    ",
+@" ██    ▀   ▐█   ",
+@" ██▄▄▄▄▄▄▄▄▄▄█▀ ",
+@" ██          █▄ ",
+@"▄▀█  ▐▌  █   ██ ",
+@"▐▄▄▌   ▄▄    █  ",
+@"  █         █   ",
+@"   ▀▀█▄▄█▀▀     ", };
+
+
+            int x = 0;
+            int y = (Console.BufferHeight - output.Length) / 2;
+            // In đầu ra ban đầu  
+            Method.Print(x, y, output);
+            while (true)
+            { 
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true); // true để không in ra phím  
+            int truonghop = 0;
+
+            if (keyInfo.KeyChar == 'w')
+                truonghop = 1; // Di chuyển lên  
+            else if (keyInfo.KeyChar == 's')
+                truonghop = 2; // Di chuyển xuống
+                               // Xóa đầu ra cũ  
+            Method.Clear(x, y, output);
+            // Duy chuyển và in lại  
+            if (truonghop == 1 && y > 0)  // Nếu không vượt quá giới hạn trên  
+            {
+                y -= 3;
+
+            }
+            else if (truonghop == 2 && y < Console.BufferHeight - output.Length) // Nếu không vượt quá giới hạn dưới  
+            {
+                y += 3;
+
+            }
+
+            // In lại đầu ra mới  
+            Method.Print(x, y, output);
+            }
+        }
+    }
+    // Các loại rác
+    public class Trash
+    {
+        public static void Fish()
+        {
+            string[] output = new string[]
+                {
+@"     ▄▄    ▄   ▄",
+@"   ▄███▄▄▄█▄▄▄█▀",
+@"    ▀██   ▀▄  ▀█",
+                };
+        }
+        public static void Plastic_bag()
+        {
+            string[] output = new string[]
+                {
+                    @"   █ █   ▐ █  ",
+                    @"  █  █  ▄█ ▐▌ ",
+                    @"  █   ▀▀▀   █ ",
+                    @"  ▀█▄▄    ▄█  ",
+                    @"     ▀▀▀▀▀▀   ",
+                };
+        }
+        public static void Glass_Bottle()
+            {
+            string[] output = new string[]
+                    {
+@"   █▀█  ",
+@"  █▀ ▀█ ",      
+@"  █   █ ", 
+@"  █   █ ",
+@"  ▀▀▀▀▀ ",
+                    };
+        }
+    }
+    // Các hàm xử lý
+    public class Method
+        {
+        //In ra màn hình
+        public static void Print(int x, int y, string[] output)
+            {
+
+                for (int i = 0; i < output.Length; i++)
+                {
+                    Console.SetCursorPosition(x, y + i);// Thiết lập vị trí con trỏ  
+                Console.WriteLine(output[i]);
+                }
+            }
+        // Xóa những hình cũ
+        public static void Clear(int x, int y, string[] output)
+        {
+              for (int i = 0; i < output.Length; i++)
+              {
+                for (int k = 0; k < output[i].Length; k++)
+                {
+                    Console.SetCursorPosition(x+k, y + i);// Thiết lập vị trí con trỏ  
+                    Console.WriteLine(' ');
+
+                }
+              }
+
+        }
+    }
+} 
+
