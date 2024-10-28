@@ -1,16 +1,13 @@
-using System.Text;
-using System.IO;
-using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters;
-using System.Net.Http.Headers;
-using System.Drawing;
-using static Game.Program;
-using System.Net.NetworkInformation;
-using System.Numerics;
-using System.Collections.Generic;
-
-
-
+using System.Text; // Thư viện hỗ trợ làm việc với chuỗi ký tự, bao gồm mã hóa văn bản (Encoding).
+using System.IO; // Thư viện hỗ trợ thao tác với file và luồng dữ liệu (Streams).
+using System.Net.Sockets; // Thư viện cho phép làm việc với mạng qua giao thức TCP/IP (sockets).
+using System.Runtime.Serialization.Formatters; // Thư viện cung cấp các lớp cho việc tuần tự hóa đối tượng (serialization).
+using System.Net.Http.Headers; // Thư viện hỗ trợ làm việc với tiêu đề (header) trong HTTP khi sử dụng HttpClient.
+using System.Drawing; // Thư viện cung cấp các lớp để làm việc với đồ họa (Graphics), hình ảnh (Image), và màu sắc (Color).
+using static Game.Program; // Cho phép truy cập trực tiếp vào các thành phần của lớp `Program` trong namespace `Game`.
+using System.Net.NetworkInformation; // Thư viện cung cấp thông tin về mạng, kiểm tra kết nối và các thông tin về thiết bị mạng.
+using System.Numerics; // Thư viện chứa các cấu trúc cho toán học cao cấp như vector, matrix, và số phức (complex numbers).
+using System.Collections.Generic; // Thư viện cung cấp các cấu trúc dữ liệu phổ biến như List, Dictionary, Queue, và Stack.
 namespace Game
 {
     //Program chính
@@ -41,149 +38,169 @@ namespace Game
 
         static void Main(string[] args)
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            Console.InputEncoding = Encoding.UTF8;
-            Console.CursorVisible = false;
-            Method.Codinhkhung();
-            Map.NameGame();
-            Console.Clear();
-            Method.Codinhkhung();
-            Map.InputNameBox();
-            Console.Clear();
-            while (running)
-            {
-                // Reset trạng thái game
-                score = 0;
-                DK = true; // Cờ để điều khiển vòng lặp game
-                again = true; // Cờ để điều khiển restart
-                Method.Codinhkhung();
-                Console.Clear();
-                Map.DrawMap(width, height);
-                for (int i = 0; i < 10; i++)
-                {
-                    Thread t1 = new Thread(() => { User.Info_User(); });
-                    t1.Start(); t1.Priority = ThreadPriority.Highest;
-                    Thread t2 = new Thread(() => { Object.BlockImage(); });
-                    t2.Start();
-                    Thread t3 = new Thread(() => { Object.Fish(); });
-                    t3.Start();
-                    Thread t4 = new Thread(() => { Object.Plastic_bag(); });
-                    t4.Start();
-                    Thread t5 = new Thread(() => { Object.Glass_Bottle(); });
-                    t5.Start();
-                    t1.Join();
-                    t2.Join();
-                    t3.Join();
-                    t4.Join();
-                    t5.Join();
+            // Thiết lập mã hóa cho đầu ra và đầu vào của console là UTF8
+Console.OutputEncoding = Encoding.UTF8;
+Console.InputEncoding = Encoding.UTF8;
+Console.CursorVisible = false; // Ẩn con trỏ
+Method.Codinhkhung(); // Gọi phương thức cố định khung
+Map.NameGame(); // Hiển thị tên trò chơi
+Console.Clear(); // Xóa màn hình console
+Method.Codinhkhung(); // Gọi lại phương thức cố định khung
+Map.InputNameBox(); // Hiển thị hộp nhập tên người chơi
+Console.Clear(); // Xóa màn hình console
 
-                }
-                SaveScore(playername,score);
-                    Console.Clear();
-                    bool restart = Map.GameOver();
-                    // Nếu người chơi chọn restart, chạy lại game
-                    if (restart)
-                    {
-                        Console.Clear();
-                        continue;  // Quay lại đầu vòng lặp để bắt đầu lại game
-                    }
-                    else
-                    {
-                        running = false;  // Thoát vòng lặp và kết thúc game
-                    }                
-            }
+// Bắt đầu vòng lặp chính của game
+while (running)
+{
+    score = 0; // Đặt lại điểm
+    DK = true; // Điều khiển vòng lặp game
+    again = true; // Điều khiển việc restart
+    Method.Codinhkhung(); // Cố định khung
+    Console.Clear(); 
+    Map.DrawMap(width, height);// Vẽ bản đồ 
+    // Tạo và chạy các luồng để hoạt động game
+    for (int i = 0; i < 10; i++)
+    {
+        Thread t1 = new Thread(() => { User.Info_User(); });
+        t1.Start(); 
+        t1.Priority = ThreadPriority.Highest; // Đặt ưu tiên cao nhất
+        
+        Thread t2 = new Thread(() => { Object.BlockImage(); });
+        t2.Start(); // Chạy luồng hiển thị chướng ngoại vật
+
+        Thread t3 = new Thread(() => { Object.Fish(); });
+        t3.Start(); // Chạy luồng hiển thị cá
+
+        Thread t4 = new Thread(() => { Object.Plastic_bag(); });
+        t4.Start(); // Chạy luồng hiển thị túi nhựa
+
+        Thread t5 = new Thread(() => { Object.Glass_Bottle(); });
+        t5.Start(); // Chạy luồng hiển thị chai thủy tinh
+
+        t1.Join(); // Đợi luồng t1 kết thúc
+        t2.Join(); // Đợi luồng t2 kết thúc
+        t3.Join(); // Đợi luồng t3 kết thúc
+        t4.Join(); // Đợi luồng t4 kết thúc
+        t5.Join(); // Đợi luồng t5 kết thúc
+    }
+
+    SaveScore(playername, score); // Lưu điểm của người chơi
+    Console.Clear(); 
+
+    // Kiểm tra xem người chơi có muốn chơi lại không
+    bool restart = Map.GameOver(); // Gọi phương thức GameOver để hỏi người chơi
+    if (restart)
+    {
+        Console.Clear(); 
+        continue; // Quay lại đầu vòng lặp để bắt đầu lại game
+    }
+    else
+    {
+        running = false; // Thoát vòng lặp và kết thúc game
+    }
+}
+
         }
        
         static void countScore(Point objects)
+{
+    // Kiểm tra xem người chơi có va chạm với đối tượng không
+    if (Head_user.IsHit(objects) == true)
+        score += 10; // Tăng điểm nếu va chạm rác
+    else
+        score -= 15; // Giảm điểm nếu va chạm chướng ngoại vật
+    
+    // Kiểm tra nếu điểm nhỏ hơn 0
+    if (score < 0)
+    {
+        DK = false; // Đặt điều kiện kết thúc game
+        Console.Clear(); // Xóa màn hình
+        // Đặt vị trí con trỏ và thông báo cho người chơi
+        Console.SetCursorPosition(((width + 1) * 2 - "Nhấn nút bất kỳ".Length) / 2, height + 2);
+        Console.Write("Nhấn nút bất kỳ");
+    }
+}
+
+public static void SaveScore(string playerName, int score)
+{
+    // Đường dẫn tới tệp lưu điểm
+    string filePath = "scores.txt";
+    // Định dạng chuỗi lưu điểm
+    string scoreEntry = $"{playerName},{score}";
+    // Mở tệp để thêm điểm
+    using (StreamWriter sw = File.AppendText(filePath))
+    {
+        sw.WriteLine(scoreEntry); // Ghi điểm vào tệp
+    }
+}
+
+public static void Scoreboard()
+{
+    // Đọc các dòng từ tệp và lấy 10 lần chơi gần nhất
+    string filePath = "scores.txt";
+    var data = File.ReadAllLines(filePath);
+    var lines = data.TakeLast(10).Reverse().ToArray(); // Đảo ngược để in theo thứ tự mới nhất
+
+    // Tạo mảng lưu tên và điểm
+    (string playerName, int score)[] scores = new (string playerName, int score)[10];
+
+    // Phân tích các dòng và lưu vào mảng
+    for (int i = 0; i < 10; i++)
+    {
+        var parts = lines[i].Split(',');
+        if (parts.Length == 2 && int.TryParse(parts[1], out int nscore))
         {
-
-            if (Head_user.IsHit(objects) == true)
-                score += 10;
-            else
-                score -= 15;
-            if (score < 0)
-            {
-                DK = false;
-                Console.Clear();
-                Console.SetCursorPosition(((width+1) * 2 - "Nhấn nút bất kỳ".Length) / 2, height + 2);
-                Console.Write("Nhấn nút bất kỳ");
-            }
-
+            scores[i] = (parts[0], nscore); // Lưu tên và điểm
         }
-        public static void SaveScore(string playerName, int score)
+    }
+
+    // Tìm điểm cao nhất
+    var highestScoreEntry = scores[0];
+    for (int i = 1; i < scores.Length; i++)
+    {
+        if (scores[i].score > highestScoreEntry.score)
         {
-            string filePath = "scores.txt";
-            string scoreEntry = $"{playerName},{score}";
-            using (StreamWriter sw = File.AppendText(filePath))
-            {
-                sw.WriteLine(scoreEntry);
-            }
+            highestScoreEntry = scores[i]; // Cập nhật điểm cao nhất
         }
-       public static void Scoreboard()
-        {
-            // Đọc các dòng từ tệp và lấy 10 lần chơi gần nhất
-            string filePath = "scores.txt";
-            var data = File.ReadAllLines(filePath);
-            var lines = data.TakeLast(10).Reverse().ToArray(); // Đảo ngược để in theo thứ tự mới nhất
+    }
 
+    // Xác định chiều cao bảng động
+    int dynamicHeight = Math.Max(6, scores.Length + 6);  // 4 dòng thêm vào phần khung
 
-            // Tạo mảng lưu tên và điểm
-            (string playerName, int score)[] scores = new (string playerName, int score)[10];
+    // Tạo khung bảng động
+    string topBorder = @"┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓";
+    string title = @"                                SCOREBOARD                                  ";
+    string separator = @"┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃";
+    string bottomBorder = @"┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
 
-            for (int i = 0; i < 10; i++)
-            {
-                var parts = lines[i].Split(',');
-                if (parts.Length == 2 && int.TryParse(parts[1], out int nscore))
-                {
-                    scores[i] = (parts[0], nscore);
-                }
-            }
+    // Căn giữa bảng theo chiều rộng console
+    int xPosition = (Console.BufferWidth - topBorder.Length) / 2;
+    int yPosition = (Console.BufferHeight - dynamicHeight) / 2;
 
-            var highestScoreEntry = scores[0];
+    // In khung trên và tiêu đề
+    Console.SetCursorPosition(xPosition, yPosition);
+    Console.WriteLine(topBorder);
+    Console.SetCursorPosition(xPosition, yPosition + 1);
+    Console.WriteLine(title);
+    Console.SetCursorPosition(xPosition, yPosition + 2);
+    Console.WriteLine(separator);
 
-            for (int i = 1; i < scores.Length; i++)
-            {
-                if (scores[i].score > highestScoreEntry.score)
-                {
-                    highestScoreEntry = scores[i];
-                }
-            }
-            // Xuất ra mảng để kiểm tra
+    // In tên và điểm của người chơi có điểm cao nhất
+    Console.SetCursorPosition(xPosition * 2 - 2, yPosition + 3);
+    Console.WriteLine($"Top player: {highestScoreEntry.playerName} - Top Score: {highestScoreEntry.score}");
 
-            // Xác định chiều cao bảng động
-            int dynamicHeight = Math.Max(6, scores.Length + 6);  // 4 dòng thêm vào phần khung
+    // In nội dung bảng điểm
+    for (int i = 0; i < scores.Length; i++)
+    {
+        Console.SetCursorPosition(xPosition * 2, yPosition + 5 + i);
+        Console.WriteLine($"Player: {scores[i].playerName} -- Score: {scores[i].score}");
+    }
 
-            // Tạo khung bảng động
-            string topBorder = @"┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓";
-            string title = @"                                SCOREBOARD                                  ";
-            string separator = @"┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃";
-            string bottomBorder = @"┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
+    // In khung dưới
+    Console.SetCursorPosition(xPosition, yPosition + dynamicHeight);
+    Console.WriteLine(bottomBorder);
+}
 
-            // Căn giữa bảng theo chiều rộng console
-            int xPosition = (Console.BufferWidth - topBorder.Length) / 2;
-            int yPosition = (Console.BufferHeight - dynamicHeight) / 2;
-
-            // In khung trên và tiêu đề
-            Console.SetCursorPosition(xPosition, yPosition);
-            Console.WriteLine(topBorder);
-            Console.SetCursorPosition(xPosition, yPosition + 1);
-            Console.WriteLine(title);
-            Console.SetCursorPosition(xPosition, yPosition + 2);
-            Console.WriteLine(separator);
-
-            Console.SetCursorPosition(xPosition * 2 - 2, yPosition + 3);
-            Console.WriteLine($"Top player: {highestScoreEntry.playerName} - Top Score: {highestScoreEntry.score}");
-
-            // In nội dung bảng điểm
-            for (int i = 0; i < scores.Length; i++)
-            {
-                Console.SetCursorPosition(xPosition * 2, yPosition + 5 + i);
-                Console.WriteLine($"Player: {scores[i].playerName} -- Score: {scores[i].score}");
-            }
-            // In khung dưới
-            Console.SetCursorPosition(xPosition, yPosition + dynamicHeight);
-            Console.WriteLine(bottomBorder);
-        }
         public class Map
         {
             // Vẽ bản đồ với chiều rộng và chiều cao 
