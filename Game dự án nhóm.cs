@@ -46,7 +46,7 @@ namespace Game
 
         static void Main(string[] args)
         {
-
+           
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
@@ -68,7 +68,7 @@ namespace Game
                 for (int i = 0; i < 10; i++)
                 {
                     Thread t1 = new Thread(() => { User.Info_User(); });
-                    t1.Start();t1.Priority = ThreadPriority.Highest;
+                    t1.Start(); t1.Priority = ThreadPriority.Highest;
                     Thread t2 = new Thread(() => { Object.BlockImage(); });
                     t2.Start();
                     Thread t3 = new Thread(() => { Object.Fish(); });
@@ -84,17 +84,20 @@ namespace Game
                     t5.Join();
 
                 }
-                Console.Clear();
-                bool restart = Map.GameOver();
-                // Nếu người chơi chọn restart, chạy lại game
-                if (restart)
+                lock (consoleLock)
                 {
                     Console.Clear();
-                    continue;  // Quay lại đầu vòng lặp để bắt đầu lại game
-                }
-                else
-                {
-                    running = false;  // Thoát vòng lặp và kết thúc game
+                    bool restart = Map.GameOver();
+                    // Nếu người chơi chọn restart, chạy lại game
+                    if (restart)
+                    {
+                        Console.Clear();
+                        continue;  // Quay lại đầu vòng lặp để bắt đầu lại game
+                    }
+                    else
+                    {
+                        running = false;  // Thoát vòng lặp và kết thúc game
+                    }
                 }
 
             }
@@ -172,7 +175,12 @@ namespace Game
                 score += 10;
             else
                 score -= 15;
-            if (score<0) DK = false;
+            if (score < 0)
+            {
+                DK = false;
+                Console.Write("Nhấn nút bất kỳ");
+            }
+
 
 
 
@@ -330,7 +338,7 @@ namespace Game
                 };
                 namegame.X = (Console.BufferWidth - Name[0].Length) / 2;
                 namegame.Y = (Console.BufferHeight - Name.Length) / 2;
-                Method.Print(ref namegame, Name);
+                Method.Print(ref namegame, Name, "Green");
                 string HuongDan = "Nhấn Nút Bất Kỳ để sang trang HƯỚNG DẪN CHƠI GAME!";
                 Console.SetCursorPosition((Console.BufferWidth - HuongDan.Length) / 2, (Console.BufferHeight + Name.Length + 4) / 2);
                 Console.WriteLine(HuongDan);
@@ -364,7 +372,7 @@ namespace Game
 };
                 huongdan.X = (Console.BufferWidth - InstructionsToPlay[0].Length) / 2;
                 huongdan.Y = (Console.BufferHeight - InstructionsToPlay.Length) / 2;
-                Method.Print(ref huongdan, InstructionsToPlay);
+                Method.Print(ref huongdan, InstructionsToPlay, "Green");
                 Console.ReadKey(true);
                 Console.Clear();
             }
@@ -384,7 +392,7 @@ namespace Game
 
                 inputnamebox.X = (Console.BufferWidth - savebox[0].Length) / 2;
                 inputnamebox.Y = (Console.BufferHeight - savebox.Length) / 2;
-                Method.Print(ref inputnamebox, savebox);
+                Method.Print(ref inputnamebox, savebox, "DarkBlue");
                 Console.SetCursorPosition(
                             (Console.BufferWidth - "Tên không được vượt quá 10 ký tự".Length)
                             / 2, inputnamebox.Y + savebox.Length + 2);
@@ -399,7 +407,7 @@ namespace Game
                     if (s.Length > maxLength)
                     {
                         Console.Clear();
-                        Method.Print(ref inputnamebox, savebox);
+                        Method.Print(ref inputnamebox, savebox, "DarkBlue");
                         Console.SetCursorPosition(
                             (Console.BufferWidth - "Tên không được vượt quá 20 ký tự. Vui lòng nhập lại!!!".Length)
                             / 2, inputnamebox.Y + savebox.Length + 2);
@@ -408,7 +416,7 @@ namespace Game
                     else
                     {
                         Console.Clear();
-                        Method.Print(ref inputnamebox, savebox);
+                        Method.Print(ref inputnamebox, savebox, "DarkBlue");
                         Console.SetCursorPosition(
                             (Console.BufferWidth - "Tên không được để trống. Vui lòng nhập lại!!!".Length)
                             / 2, inputnamebox.Y + savebox.Length + 2);
@@ -421,87 +429,63 @@ namespace Game
                 SaveScore(s, score);
 
             }
-            public static bool GameOver()//Màn hình hiện khi thua
+            public static bool GameOver() // Phương thức để hiển thị màn hình "Game Over" khi người chơi thua  
             {
+                // Mảng chứa các chuỗi đại diện cho hình ảnh và nội dung của màn hình "Game Over"  
                 string[] gameover = new string[]
-                  {
-                    @"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒",
-                    @"▒               G A M E  O V E R                 ▒",
-                    @"▒                                                ▒",
-                    @"▒             ┏━━━━━┓                            ▒",
-                    @"▒             ┃Enter┃ to restart!                ▒",
-                    @"▒             ┗━━━━━┛                            ▒",
-                    @"▒                                                ▒",
-                    @"▒             ┏━━━━━┓                            ▒",
-                    @"▒             ┃ Tab ┃ to open score board!       ▒",
-                    @"▒             ┗━━━━━┛                            ▒",
-                    @"▒                                                ▒",
-                    @"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒"
-                  };
+                {
+        @"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒", // Ranh giới phía trên của màn hình  
+        @"▒               G A M E  O V E R                 ▒", // Tiêu đề màn hình "Game Over"  
+        @"▒                                                ▒", // Khoảng trống   
+        @"▒             ┏━━━━━┓                            ▒", // Ranh giới cho hộp thoại  
+        @"▒             ┃Enter┃ to restart!                ▒", // Hướng dẫn cho người chơi để bắt đầu lại trò chơi  
+        @"▒             ┗━━━━━┛                            ▒", // Đáy hộp thoại  
+        @"▒                                                ▒", // Khoảng trống   
+        @"▒             ┏━━━━━┓                            ▒", // Hộp thoại cho scoreboard  
+        @"▒             ┃ Tab ┃ to open score board!       ▒", // Hướng dẫn cho người chơi để mở bảng điểm  
+        @"▒             ┗━━━━━┛                            ▒", // Đáy hộp thoại  
+        @"▒                                                ▒", // Khoảng trống   
+        @"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒"  // Ranh giới phía dưới của màn hình  
+                };
+
+                // Xác định tọa độ X để căn giữa màn hình gameover theo chiều ngang  
                 game.X = (Console.BufferWidth - gameover[0].Length) / 2;
+                // Xác định tọa độ Y để căn giữa màn hình gameover theo chiều dọc  
                 game.Y = (Console.BufferHeight - gameover.Length) / 2;
-                Method.Print(ref game, gameover);
-                Console.SetCursorPosition((Console.BufferWidth
-                        - "Enter để chơi lại hoặc phím 0 để thoát ".Length) / 2, game.Y + gameover.Length + 2);
+
+                // In nội dung của màn hình "Game Over" lên console với màu nền là "DarkBlue"  
+                Method.Print(ref game, gameover, "DarkBlue");
+
+                // Thiết lập vị trí con trỏ để viết hướng dẫn ở phía dưới màn hình  
+                Console.SetCursorPosition((Console.BufferWidth - "Enter để chơi lại hoặc phím 0 để thoát ".Length) / 2, game.Y + gameover.Length + 2);
+                // In hướng dẫn cho người chơi  
                 Console.WriteLine("Enter để chơi lại hoặc phím 0 để thoát ");
+
+                // Vòng lặp vô tận để chờ người chơi đưa ra lựa chọn  
                 while (true)
                 {
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(true); // true để không in ra phím 
+                    // Đọc phím nhấn từ người chơi mà không hiển thị phím đó trên console  
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(true); // true để không in ra phím  
+
+                    // Nếu người chơi nhấn phím Enter, trả về true để bắt đầu lại trò chơi  
                     if (keyInfo.Key == ConsoleKey.Enter)
                     {
-                        return true;  // Trả về true nếu người chơi muốn restart
+                        return true;  // Trả về true nếu người chơi muốn restart  
                     }
+                    // Nếu người chơi nhấn phím '0' hoặc 'NumPad0', trả về false để thoát trò chơi  
                     else if (keyInfo.Key == ConsoleKey.D0 || keyInfo.Key == ConsoleKey.NumPad0)
                     {
-                        return false; // Trả về false nếu người chơi muốn thoát
+                        return false; // Trả về false nếu người chơi muốn thoát  
                     }
-                    else if (keyInfo.Key == ConsoleKey.Tab) // tab mở bxh
+                    // Nếu người chơi nhấn phím Tab, hiển thị bảng điểm  
+                    else if (keyInfo.Key == ConsoleKey.Tab) // tab mở bxh  
                     {
-                        Console.Clear();
-                        Scoreboard();
+                        Console.Clear(); // Xóa màn hình console  
+                        Scoreboard(); // Gọi phương thức hiển thị bảng điểm  
                     }
-
                 }
-
-
-
             }
-
-            public static int MaximumLengthOfPlayersName { get; private set; }
-
-            public static void BangXepHang()
-            {
-                string[] bangxephang = new string[]
-                {
-                @"┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓",
-                @"┃                                      RANK                                          ┃",
-                @"┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃",
-                @"┃                                                                                    ┃",
-                @"┃                                                                                    ┃",
-                @"┃                                                                                    ┃",
-                @"┃                                                                                    ┃",
-                @"┃                                                                                    ┃",
-                @"┃                                                                                    ┃",
-                @"┃                                                                                    ┃",
-                @"┃                                                                                    ┃",
-                @"┃                                                                                    ┃",
-                @"┃                                                                                    ┃",
-                @"┃                                                                                    ┃",
-                @"┃                                                                                    ┃",
-                @"┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛",
-                };
-                bang.X = (Console.BufferWidth - bangxephang[0].Length) / 2;
-                bang.Y = (Console.BufferHeight - bangxephang.Length) / 2;
-                Method.Print(ref bang, bangxephang);
-            }
-
         }
-
-
-
-
-
-
         // Người chơi
         public class User
         {
@@ -519,61 +503,60 @@ namespace Game
                 // Đặt lại con trỏ về vị trí cũ sau khi in bảng điểm
                 //Console.SetCursorPosition(currentLeft, currentTop);
             }
-            public static void Info_User()
+            public static void Info_User() // Phương thức tĩnh để quản lý và hiển thị thông tin người dùng trên console  
             {
+                // Mảng các chuỗi chứa hình ảnh đại diện cho người dùng.  
+                // Mỗi chuỗi trong mảng là một dòng của hình đại diện.  
                 string[] output = new string[]
-                {   @" ██▄▄▄▄▄▄▄▄▄▄█▀ ",
-                    @" ██          █▄ ",
-                    @"▄▀█  ▐▌  █   ██ ",
-                    @"▐▄▄▌   ▄▄    █  ",
-                    @"  █         █   ",
-                    @"   ▀▀█▄▄█▀▀     ",
+                {
+        @" ██▄▄▄▄▄▄▄▄▄▄█▀ ",  
+        @" ██          █▄ ",  
+        @"▄▀█  ▐▌  █   ██ ",  
+        @"▐▄▄▌   ▄▄    █  ",  
+        @"  █         █   ",  
+        @"   ▀▀█▄▄█▀▀     ",   
                 };
 
-                Random rnd = new Random();
-                int[] lane = { 2, 11, 20 }; // thay doi Y, giu nguyen X
-                user.X = 3;
-                user.Y = lane[rnd.Next(0, lane.Length)];
-                // In đầu ra ban đầu
-                Method.Print(ref user, output);
+                Random rnd = new Random(); // Khởi tạo một đối tượng Random để sinh số ngẫu nhiên cho việc chọn vị trí Y  
+                int[] lane = { 2, 11, 20 }; // Mảng chứa các giá trị Y mà người dùng có thể đứng 
+
+                user.X = 3; // Đặt tọa độ X cho người dùng ở vị trí 3, tức là tại cột thứ 3 trên console  
+                user.Y = lane[rnd.Next(0, lane.Length)]; // Gán tọa độ Y cho người dùng bằng một giá trị ngẫu nhiên từ mảng lane  
+
+                // In hình đại diện của người dùng ra console lần đầu tiên với tọa độ đã thiết lập  
+                Method.Print(ref user, output, "");
+
+                // Vòng lặp chính, chạy liên tục cho đến khi DK (trạng thái hoạt động) là true  
                 while (DK)
                 {
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(true); // true để không in ra phím  
-                    int truonghop = 0;
-                    if (keyInfo.KeyChar == 'w')
-                        truonghop = 1; // Di chuyển lên  
-                    if (keyInfo.KeyChar == 's')
-                        truonghop = 2; // Di chuyển xuống
-                    if (keyInfo.Key == ConsoleKey.Escape)
-                        truonghop = 3;
+                    // Đọc phím nhấn của người dùng mà không hiển thị nó trên console  
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
-                    Method.Clear(user, output); // Xóa đầu ra cũ 
-                    if (truonghop == 1 && user.Y > 2)  // Nếu không vượt quá giới hạn trên  
-                    {
-                        user.Y -= 9;
+                    if (keyInfo.Key == ConsoleKey.UpArrow && user.Y > 2) // Nếu nhấn phím mũi tên lên và tọa độ Y lớn hơn 2  
+                        user.Y -= 9; // Giảm tọa độ Y để di chuyển lên (9 đơn vị)  
 
-                    }
-                    if (truonghop == 2 && user.Y < 18) // Nếu không vượt quá giới hạn dưới  
-                    {
-                        user.Y += 9;
+                    if (keyInfo.Key == ConsoleKey.DownArrow && user.Y < 18) // Nếu nhấn phím mũi tên xuống và tọa độ Y nhỏ hơn 18  
+                        user.Y += 9; // Tăng tọa độ Y để di chuyển xuống (9 đơn vị)  
 
-                    }
-                    if (truonghop == 3)
+                    if (keyInfo.Key == ConsoleKey.Escape) // Nếu nhấn phím Escape  
                     {
-                        DK = false;
-                        Console.Clear();
-                        break;
+                        DK = false; // Đặt DK thành false để dừng vòng lặp  
+                        Console.Clear(); // Xóa màn hình console khi thoát, dọn sạch giao diện  
+                        break; // Thoát khỏi vòng lặp  
                     }
-                    Head_user.X = user.X + output[0].Length;
-                    Head_user.Y = user.Y;
-                    //// In lại đầu ra mới  
-                    Method.Print(ref user, output);
-                    //if (Method.Phan_Loai_Rac() == 1)
-                    //    Method.Clear(ref fish, output);
+
+                    // Xóa đầu ra cũ của hình đại diện người dùng trên console trước khi in lại  
+                    Method.Clear(user, output);
+
+                    // Cập nhật vị trí cho biến Head_user dựa trên vị trí hiện tại của user  
+                    Head_user.X = user.X + output[0].Length; // Đặt tọa độ X của Head_user ngay bên phải user   
+                    Head_user.Y = user.Y; // Cập nhật tọa độ Y của Head_user để trùng với tọa độ Y của user  
+
+                    // In lại hình đại diện mới của người dùng lên console với tọa độ đã cập nhật  
+                    Method.Print(ref user, output, "");       
                 }
             }
         }
-        //Các loại rác
         //Các loại rác
         public class Object
         {
@@ -588,9 +571,9 @@ namespace Game
                 };
 
                 int[] lane = { 2, 11, 20 };
-                fish.X = (Console.BufferWidth - output[0].Length) / 2;
+                fish.X = width * 2 - output[0].Length;
                 fish.Y = lane[rnd.Next(0, lane.Length)];
-                Method.Move(ref fish, output,"fish");
+                Method.Move(ref fish, output, "fish");
             }
             public static void Plastic_bag()
             {
@@ -603,9 +586,9 @@ namespace Game
                 };
 
                 int[] lane = { 2, 11, 20 };
-                plastic_bag.X = (Console.BufferWidth - output[0].Length) / 2;
+                plastic_bag.X = width * 2 - output[0].Length;
                 plastic_bag.Y = lane[rnd.Next(0, lane.Length)];
-                Method.Move(ref plastic_bag, output,"plastic bag");
+                Method.Move(ref plastic_bag, output, "plastic bag");
             }
 
             public static void Glass_Bottle()
@@ -620,9 +603,9 @@ namespace Game
                     };
 
                 int[] lane = { 2, 11, 20 };
-                glass_bottle.X = (Console.BufferWidth - output[0].Length) / 2;
+                glass_bottle.X = width * 2 - output[0].Length;
                 glass_bottle.Y = lane[rnd.Next(0, lane.Length)];
-                Method.Move(ref glass_bottle, output,"glass bottle");
+                Method.Move(ref glass_bottle, output, "glass bottle");
             }
             public static void BlockImage()
             {
@@ -635,9 +618,9 @@ namespace Game
                     @" ████████ ",
                 };
                 int[] lane = { 2, 11, 20 };
-                block.X = (Console.BufferWidth - BlockImage[0].Length) / 2;
+                block.X = width * 2 - BlockImage[0].Length;
                 block.Y = lane[rnd.Next(0, lane.Length)];
-                Method.Move(ref block, BlockImage,"block");
+                Method.Move(ref block, BlockImage, "block");
             }
 
         }
@@ -645,31 +628,50 @@ namespace Game
         // Các hàm xử lý
         public class Method
         {
-            static Point previousPoint = new Point(0, 0);
-
             //In ra màn hình
-            public static void Print(ref Point point, string[] output)
+            public static void Print(ref Point point, string[] output, string color)
             {
-                lock (consoleLock)
+                 
+                lock (consoleLock)// Khóa đối tượng để đảm bảo rằng phần này của code
+                                  // không bị truy cập từ nhiều luồng cùng một lúc 
                 {
-                    for (int i = 0; i < output.Length; i++)
+                    ConsoleColor ColorOfImage = new ConsoleColor();// Khai báo biến lưu màu sắc  
+
+
+                    if (Enum.TryParse(color, out ColorOfImage))// Kiểm tra nếu màu sắc đầu vào có thể chuyển thành kiểu ConsoleColor                        
+                        Console.ForegroundColor = ColorOfImage;// Thiết lập màu sắc của văn bản đầu ra
+                                                               // 
+                    for (int i = 0; i < output.Length; i++)// Vòng lặp qua từng dòng của mảng output  
+
                     {
-                        Console.SetCursorPosition(point.X, point.Y + i);// Thiết lập vị trí con trỏ  
-                        Console.WriteLine(output[i]);
+
+                        Console.SetCursorPosition(point.X, point.Y + i);// Thiết lập vị trí con trỏ trên console với tọa độ được chỉ định
+                                                                        // với tọa độ X được cộng thêm k (để di chuyển theo chiều ngang)  
+                                                                        // và tọa độ Y được cộng thêm i (để di chuyển theo chiều dọc)
+
+                        Console.WriteLine(output[i]);// In dòng văn bản hiện tại  
                     }
                 }
             }
             // Xóa những hình cũ
             public static void Clear(Point point, string[] output)
             {
-                lock (consoleLock)
+                
+                lock (consoleLock)// Khóa đối tượng để đảm bảo rằng phần này của code  
+                                  // sẽ không bị truy cập từ nhiều luồng cùng một lúc
                 {
-                    for (int i = 0; i < output.Length; i++)
-                    {
-                        for (int k = 0; k < output[i].Length; k++)
-                        {
-                            Console.SetCursorPosition(point.X + k, point.Y + i);// Thiết lập vị trí con trỏ  
-                            Console.WriteLine(' ');
+                    for (int i = 0; i < output.Length; i++)// Vòng lặp qua từng dòng của mảng output 
+                    {                        
+                        for (int k = 0; k < output[i].Length; k++)// Vòng lặp qua từng ký tự của dòng hiện tại trong output  
+                        {                            
+                            Console.SetCursorPosition(point.X + k, point.Y + i);// Thiết lập vị trí con trỏ trên console với tọa độ được chỉ định  
+                                                                                // với tọa độ X được cộng thêm k (để di chuyển theo chiều ngang)  
+                                                                                // và tọa độ Y được cộng thêm i (để di chuyển theo chiều dọc)
+                                                                                 
+                            Console.WriteLine(' ');// Thiết lập vị trí con trỏ
+                                                   // Ghi một ký tự khoảng trắng (' ') tại vị trí hiện tại,  
+                                                   // điều này giúp "xóa" nội dung hiện tại tại vị trí đó  
+                                                   // bằng cách ghi đè lên các ký tự cũ bằng khoảng trắng 
 
                         }
                     }
@@ -677,67 +679,55 @@ namespace Game
                 }
 
             }
-            // Di chuyển
-            public static void Move(ref Point point, string[] print,string objectname)
+            //Hàm di chuyển
+            public static void Move(ref Point point, string[] print, string objectname)
             {
-                int xspawn = point.X;
-                Random rnd = new Random();
-                int[] lane = { 2, 11, 20 }; // thay doi Y, giu nguyen X
-                // Cờ đánh dấu đã va chạm
-                while (point.X > 0 && DK == true)
+                int xspawn = point.X; // Lưu tọa độ X ban đầu
 
+                Random rnd = new Random(); // Khởi tạo đối tượng Random để tạo số ngẫu nhiên
+
+                int[] lane = { 2, 11, 20 }; // Mảng chứa các giá trị Y cho phép di chuyển khối mới
+
+                while (point.X > 0 && DK == true) // Lặp cho đến khi tọa độ X không còn hợp lệ hoặc DK là false  
                 {
-                    lock (consoleLock)
+                    lock (consoleLock) // Khóa để đảm bảo an toàn khi truy cập console  
                     {
-                        bool hasCollided = false;
-                        Method.Clear(point, print); // Xóa vật thể
+                        bool hasCollided = false; // Biến đánh dấu nếu xảy ra va chạm  
+                        Method.Clear(point, print); // Xóa vật thể cũ ở vị trí hiện tại  
 
-                        Method.Print(ref point, print);  // In lại vật thể ở vị trí mới
+                        Method.Print(ref point, print, ""); // In lại vật thể ở vị trí mới  
 
-                        point.X--;
+                        point.X--; // Di chuyển vật thể sang trái  
 
-
-
-                        if (Head_user.IsHit(point) && !hasCollided || point.X < 2 && Head_user.IsHit(point) == false) // có va chạm, bỏ qua 
+                        // Kiểm tra va chạm với đối tượng người dùng  
+                        if (Head_user.IsHit(point) && !hasCollided || point.X < 2 && Head_user.IsHit(point) == false) // có va chạm, bỏ qua  
                         {
-                            countScore(point); // Cập nhật điểm khi có va chạm
-                            hasCollided = true; // Đánh dấu đã va chạm, tránh tính lại điểm trong lần va chạm này
-
+                            countScore(point); // Cập nhật điểm khi xảy ra va chạm  
+                            hasCollided = true; // Đánh dấu đã xảy ra va chạm, tránh tính điểm lại trong lần va chạm này  
                         }
 
-                        User.DisplayScoreBoard(score);
+                        User.DisplayScoreBoard(score); // Hiển thị bảng điểm  
 
-                        Thread.Sleep(30); // Tạm dừng để điều chỉnh tốc độ di chuyển
+                        Thread.Sleep(30); // Tạm dừng để điều chỉnh tốc độ di chuyển  
+                                          // Kiểm tra nếu đối tượng là "block" và có va chạm  
                         if (objectname == "block" && Head_user.IsHit(point))
-                        
-                            DK = false;
-
-
-                            if (point.X == 1 || hasCollided)
                         {
-                            Method.Clear(point, print);
-                            point.X = xspawn;
-                            // Thay đổi Y ngẫu nhiên cho khối mới  
-                            point.Y = lane[rnd.Next(0, lane.Length)];
-                            Method.Print(ref point, print);  // Tạo lại hình ảnh block
+                            DK = false; // Dừng lại nếu va chạm với block  
+                            Console.Write("Nhấn nút bất kỳ"); // Nhắc nhở người dùng nhấn phím  
                         }
 
-
+                        // Nếu điểm X đã ở vị trí 1 hoặc đã va chạm  
+                        if (point.X == 1 || hasCollided)
+                        {
+                            Method.Clear(point, print); // Xóa vật thể cũ  
+                            point.X = xspawn; // Trả lại tọa độ X về điểm khởi đầu  
+                                              // Thay đổi Y ngẫu nhiên cho khối mới  
+                            point.Y = lane[rnd.Next(0, lane.Length)]; // Lấy giá trị Y ngẫu nhiên từ mảng lane  
+                            Method.Print(ref point, print, ""); // Tạo lại hình ảnh block mới  
+                        }
                     }
-
                 }
-
             }
-            //Check va chạm với người dùng với rác và chướng ngọai vật 
-            public static bool hitBox(Point head_user, Point input)
-            {
-                head_user.X = user.X + 5;
-                if (head_user.X == input.X)
-                    return true;
-                else return false;
-
-            }
-
             //check để cho không in trùng tọa đọ cnv và rác 
             //public static bool isEqual(Point fish, Point plastic_bag, Point glass_bottle, Point block)
             //{
@@ -752,26 +742,6 @@ namespace Game
             //        return false; // false là trùng
             //    else return true; // true không trùng
             //}
-
-            public static int Phan_Loai_Rac()
-            {
-                int truonghop = 0;
-                ConsoleKeyInfo keyInfo = Console.ReadKey(true); // true để không in ra phím
-                if (keyInfo.KeyChar == '1')
-                    truonghop = 1;
-                if (keyInfo.KeyChar == '2')
-                    truonghop = 2;
-                if (keyInfo.KeyChar == '3')
-                    truonghop = 3;
-                return truonghop;
-
-            }
-            public static void Nguoi_Cham_Chuong_Ngoai_Vat()
-            {
-                //if (isEqual(head_user, block))
-                Console.WriteLine("Game Over");
-
-            }
         }
 
         public class Point
