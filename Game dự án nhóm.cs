@@ -354,27 +354,26 @@ namespace Game
                     Console.SetCursorPosition(inputnamebox.X + 3, inputnamebox.Y + 3);
                     s = Console.ReadLine();
                 }
-                SaveScore(s, score);
 
             }
-            public static bool GameOver() // Phương thức để hiển thị màn hình "Game Over" khi người chơi thua  
+            // Phương thức để hiển thị màn hình "Game Over" khi người chơi thua 
+            public static bool GameOver()  
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                // Mảng chứa các chuỗi đại diện cho hình ảnh và nội dung của màn hình "Game Over"  
                 string[] gameover = new string[]
                 {
-        @"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒", // Ranh giới phía trên của màn hình  
-        @"▒               G A M E  O V E R                 ▒", // Tiêu đề màn hình "Game Over"  
-        @"▒                                                ▒", // Khoảng trống   
-        @"▒             ┏━━━━━┓                            ▒", // Ranh giới cho hộp thoại  
-        @"▒             ┃Enter┃ to restart!                ▒", // Hướng dẫn cho người chơi để bắt đầu lại trò chơi  
-        @"▒             ┗━━━━━┛                            ▒", // Đáy hộp thoại  
-        @"▒                                                ▒", // Khoảng trống   
-        @"▒             ┏━━━━━┓                            ▒", // Hộp thoại cho scoreboard  
-        @"▒             ┃ Tab ┃ to open score board!       ▒", // Hướng dẫn cho người chơi để mở bảng điểm  
-        @"▒             ┗━━━━━┛                            ▒", // Đáy hộp thoại  
-        @"▒                                                ▒", // Khoảng trống   
-        @"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒"  // Ranh giới phía dưới của màn hình  
+        @"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒",
+        @"▒               G A M E  O V E R                 ▒", 
+        @"▒                                                ▒", 
+        @"▒             ┏━━━━━┓                            ▒", 
+        @"▒             ┃Enter┃ to restart!                ▒",
+        @"▒             ┗━━━━━┛                            ▒", 
+        @"▒                                                ▒", 
+        @"▒             ┏━━━━━┓                            ▒", 
+        @"▒             ┃ Tab ┃ to open score board!       ▒", 
+        @"▒             ┗━━━━━┛                            ▒",   
+        @"▒                                                ▒",    
+        @"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒"  
                 };
 
                 // Xác định tọa độ X để căn giữa màn hình gameover theo chiều ngang  
@@ -421,20 +420,13 @@ namespace Game
         {
             public static void DisplayScoreBoard(int score)
             {
-                int scoreBoardX = ((width-2)*2-"Score".Length)/2;
-                int scoreBoardY = height;
-
                 // Đặt con trỏ tại vị trí bảng điểm
-                Console.SetCursorPosition(scoreBoardX, scoreBoardY);
-
-                // In bảng điểm, làm mới nội dung mỗi lầ
-                Console.Write($" Score: {score} ");
+                Console.SetCursorPosition(((width-2)*2-"Score".Length)/2, height);    
+                Console.Write($" Score: {score} ");// In  điểm, làm mới nội dung liên tục
             }
             public static void Info_User() 
             {
-                Console.ForegroundColor = ConsoleColor.DarkMagenta;//MAUF MEF
-                // Mảng các chuỗi chứa hình ảnh đại diện cho người dùng.  
-                // Mỗi chuỗi trong mảng là một dòng của hình đại diện.  
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 string[] output = new string[]
                 {
         @" ██▄▄▄▄▄▄▄▄▄▄█▀ ",
@@ -447,55 +439,45 @@ namespace Game
 
                 Random rnd = new Random(); 
                 int[] lane = { 2, 11, 20 }; 
-
                 user.X = 3;   
-                user.Y = lane[rnd.Next(0, lane.Length)]; // Gán tọa độ Y cho người dùng bằng một giá trị ngẫu nhiên từ mảng lane  
-
+                user.Y = lane[rnd.Next(0, lane.Length)]; 
                 // In hình đại diện của người dùng ra console lần đầu tiên với tọa độ đã thiết lập  
                 Method.Print(ref user, output, "");
 
-                // Vòng lặp chính, chạy liên tục cho đến khi DK (trạng thái hoạt động) là true  
+                // Vòng lặp chính, chạy liên tục cho đến khi DK false 
                 while (DK)
                 {
-                    // Đọc phím nhấn của người dùng mà không hiển thị nó trên console  
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                    Method.Clear(user, output);
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);// Đọc phím nhấn của người dùng mà không hiển thị  
+                    Method.Clear(user, output);// Xóa đầu ra cũ của người chơi trước khi in lại  
 
-                    if (keyInfo.Key == ConsoleKey.UpArrow && user.Y > 2) // Nếu nhấn phím mũi tên lên và tọa độ Y lớn hơn 2  
-                        user.Y -= 9; // Giảm tọa độ Y để di chuyển lên (9 đơn vị)  
+                    if (keyInfo.Key == ConsoleKey.UpArrow && user.Y > 2) // Nếu nhấn phím mũi tên lên và rào trên
+                        user.Y -= 9; // Giảm tọa độ Y để di chuyển lên 
 
-                    if (keyInfo.Key == ConsoleKey.DownArrow && user.Y < 18) // Nếu nhấn phím mũi tên xuống và tọa độ Y nhỏ hơn 18  
-                        user.Y += 9; // Tăng tọa độ Y để di chuyển xuống (9 đơn vị)  
+                    if (keyInfo.Key == ConsoleKey.DownArrow && user.Y < 18) // Nếu nhấn phím mũi tên xuống và rào dưới
+                        user.Y += 9; // Tăng tọa độ Y để di chuyển xuống 
 
-                    if (keyInfo.Key == ConsoleKey.Escape) // Nếu nhấn phím Escape  
+                    if (keyInfo.Key == ConsoleKey.Escape) // Nhấn phím Escape  
                     {
                         DK = false; // Đặt DK thành false để dừng vòng lặp  
-                        Console.Clear(); // Xóa màn hình console khi thoát, dọn sạch giao diện  
+                        Console.Clear();
                         break; // Thoát khỏi vòng lặp  
                     }
-
-                    // Xóa đầu ra cũ của hình đại diện người dùng trên console trước khi in lại  
-
                     // Cập nhật vị trí cho biến Head_user dựa trên vị trí hiện tại của user  
                     Head_user.X = user.X + output[0].Length; // Đặt tọa độ X của Head_user ngay bên phải user   
                     Head_user.Y = user.Y; // Cập nhật tọa độ Y của Head_user để trùng với tọa độ Y của user  
-
-                    // In lại hình đại diện mới của người dùng lên console với tọa độ đã cập nhật  
-                    Method.Print(ref user, output, "");
+                    Method.Print(ref user, output, ""); // In lại hình người chơi với tọa độ đã cập nhật  
                 }
-                Console.ResetColor();//RESET MAUF MEF
+                Console.ResetColor();
             }
         }
         //Các loại rác
         public class Object
         {
-            // Tạo một đối tượng Random để sinh ra các giá trị ngẫu nhiên  
             private static Random rnd = new Random();
 
-            // Phương thức để hiển thị hình ảnh của một con cá  
+            // Con cá  
             public static void Fish()
             {
-                // Mảng chuỗi chứa các dòng để vẽ hình con cá  
                 string[] output = new string[]
                 {
             @"     ▄▄   ▄  ▄ ",
@@ -503,16 +485,10 @@ namespace Game
             @"    ▀██  ▀▄ ▀█ ",
                 };
 
-                // Mảng chứa các làn (y-coordinate) mà con cá có thể xuất hiện  
                 int[] lane = { 2, 11, 20 };
-
-                // Đặt tọa độ X cho con cá, tính toán dựa trên chiều rộng của console  
                 fish.X = width * 2 - output[0].Length;
-                // Chọn một làn ngẫu nhiên cho con cá  
-                fish.Y = lane[rnd.Next(0, lane.Length)];
-
-                // Gọi phương thức Move để vẽ con cá  
-                Method.Move(ref fish, output, "fish");
+                fish.Y = lane[rnd.Next(0, lane.Length)]; 
+                Method.Move(ref fish, output, "fish");// Gọi phương thức Move để hoạt động 
             }
 
             // Túi nhựa  
@@ -529,14 +505,13 @@ namespace Game
                 int[] lane = { 2, 11, 20 };
                 plastic_bag.X = width * 2 - output[0].Length;
                 plastic_bag.Y = lane[rnd.Next(0, lane.Length)];
-                // Gọi phương thức Move để hoạt động  
-                Method.Move(ref plastic_bag, output, "plastic bag");
+                Method.Move(ref plastic_bag, output, "plastic bag");// Gọi phương thức Move để hoạt động  
+
             }
 
             // Chai thủy tinh  
             public static void Glass_Bottle()
             {
-                // Mảng chuỗi chứa các dòng để vẽ hình chai thủy tinh  
                 string[] output = new string[]
                 {
             @"   █▀█  ",
@@ -552,7 +527,7 @@ namespace Game
                 Method.Move(ref glass_bottle, output, "glass bottle");// Gọi phương thức Move để hoạt động
             }
 
-            //  
+            // Chướng ngoại vật
             public static void BlockImage()
             {
                 string[] BlockImage =
@@ -577,24 +552,12 @@ namespace Game
         {
             public static void Codinhkhung()
             {
-                // Sử dụng khóa để đảm bảo chỉ một luồng có thể vào đây tại một thời điểm  
-                lock (consoleLock)
-                {
-                    try
-                    {
-                        // Kiểm tra kích thước của Buffer so với kích thước đã lưu trữ  
-                        if (width != Console.BufferWidth || height != Console.BufferHeight)
-                            throw new Exception(); // Ném ngoại lệ nếu kích thước không khớp  
-                    }
-                    catch
-                    {
-                        Console.Clear();
 
                         // Kiểm tra kích thước cửa sổ console  
                         if (Console.BufferWidth < 120 || Console.BufferHeight < 30)
-                        {              
+                        {                          
+                            Console.Clear();
                             string message = "Kích thước cửa sổ quá nhỏ!";
-
                             // In thông điệp ở giữa màn hình nếu có đủ không gian  
                             if (Console.BufferWidth > message.Length)
                             {
@@ -606,9 +569,9 @@ namespace Game
                         // Chờ cho đến khi kích thước cửa sổ được điều chỉnh đủ lớn  
                         while (Console.BufferWidth < 120 || Console.BufferHeight < 30)
                         {}                      
-                    }
+                    
                 }
-            }
+            
             //In ra màn hình
             public static void Print(ref Point point, string[] output, string color)
             {
@@ -646,14 +609,9 @@ namespace Game
                                                                                 // và tọa độ Y được cộng thêm i (để di chuyển theo chiều dọc)
 
                             Console.WriteLine(' ');// Ghi đè ký tự khoảng trắng (' ') lên các ký tự cũ  
-                                                   
-                                                   
-
                         }
                     }
-
                 }
-
             }
             //Hàm tạo sự di chuyển, check va chạm để cập nhật điểm
             public static void Move(ref Point point, string[] print, string objectname)
