@@ -15,8 +15,6 @@ namespace Game
     {
         static int width = 50, height = 27;
         public static object consoleLock = new object();
-        static Point game = new Point(0, 0);
-        static Point bang = new Point(0, 0);
         static Point user = new Point(0, 0);
         static Point fishbone = new Point(0, 0);
         static Point plasticbag = new Point(0, 0);
@@ -297,7 +295,8 @@ namespace Game
             public static bool GameOver()
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                string[] gameover = new string[]
+            Point game = new Point(0, 0);
+            string[] gameover = new string[]
                 {
         @"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒",
         @"▒               G A M E  O V E R                 ▒",
@@ -360,7 +359,7 @@ namespace Game
             {
                 DK = false; // Đặt điều kiện kết thúc game
                 Console.Clear(); // Xóa màn hình
-                                 // Đặt vị trí con trỏ và thông báo cho người chơi
+                               // Đặt vị trí con trỏ và thông báo cho người chơi
                 Console.SetCursorPosition(((width + 1) * 2 - "Nhấn nút bất kỳ".Length) / 2, height + 2);
                 Console.Write("Nhấn nút bất kỳ");
             }
