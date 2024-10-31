@@ -54,7 +54,7 @@ namespace Game
                 t1.Priority = ThreadPriority.Highest; // Đặt ưu tiên cao nhất
 
                 Thread t2 = new Thread(() => { Block(); });
-                t2.Start(); // Chạy luồng hiển thị chướng ngoại vật
+                t2.Start(); // Chạy luồng hiển thị chướng ngại vật
 
                 Thread t3 = new Thread(() => { Fishbone(); });
                 t3.Start(); // Chạy luồng hiển thị xương cá
@@ -216,7 +216,6 @@ namespace Game
             Method.Print(ref instruction, InstructionsToPlay, "Green");// In bảng hướng dẫn ra màn hình
             Console.ReadKey(true);// Chờ người dùng nhấn phím trước khi xóa màn hình
             Console.Clear();
-            Console.ResetColor();// Đặt lại màu console về mặc định
         }
 
 
@@ -328,7 +327,6 @@ namespace Game
                     Scoreboard(); // Gọi phương thức hiển thị bảng điểm  
                 }
             }
-            Console.ResetColor();
         }
 
 
@@ -342,7 +340,7 @@ namespace Game
             if (playerHitbox.IsHit(objects) == true)
                 score += 10; // Tăng điểm nếu va chạm rác
             else
-                score -= 15; // Giảm điểm nếu va chạm chướng ngoại vật
+                score -= 15; // Giảm điểm nếu va chạm chướng ngại vật
 
             // Kiểm tra nếu điểm nhỏ hơn 0
             if (score < 0)
@@ -490,14 +488,13 @@ namespace Game
                 playerHitbox.Y = player.Y;
                 Method.Print(ref player, output, ""); // In lại hình người chơi với tọa độ đã cập nhật  
             }
-            Console.ResetColor();
         }
 
 
 
 
 
-        //Các loại rác và chướng ngoại vật
+        //Các loại rác và chướng ngại vật
         private static Random rnd = new Random();
 
         // Xương cá
@@ -552,7 +549,7 @@ namespace Game
             Method.Move(ref glassbottle, output, "glass bottle");// Gọi phương thức Move để hoạt động
         }
 
-        // Chướng ngoại vật
+        // Chướng ngại vật
         public static void Block()
         {
             string[] BlockImage =
@@ -674,7 +671,7 @@ namespace Game
 
                         DisplayScoreBoard(score); // Hiển thị bảng điểm  
 
-                        // Kiểm tra va chạm với chướng ngoại vật 
+                        // Kiểm tra va chạm với chướng ngại vật 
                         if (objectname == "block" && playerHitbox.IsHit(point))
                         {
                             DK = false; // Dừng lại nếu va chạm với chướng ngại vật
